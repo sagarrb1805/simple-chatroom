@@ -9,9 +9,11 @@ server.listen()
 clients = []
 names = []
 
+
 def broadcast(message):
     for client in clients:
         client.send(message.encode('ascii'))
+
 
 def client_control(client):
     while True:
@@ -26,13 +28,19 @@ def client_control(client):
             client.close()
             break
 
+
 def start_server():
     while True:
         client, address = server.accept()
         client.send('enter your name:'.encode('ascii'))
         name = client.recv(1024).decode('ascii')
+        client.send('hello {} welcome to the chat'.format(name).encode('ascii'))
+        print('{} connected {}'.format(name, client))
         names.append(name)
         clients.append(client)
 
         client_control_thread = threading.Thread(target=client_control, args=(client,))
         client_control_thread.start()
+
+
+start_server()
